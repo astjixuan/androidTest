@@ -2,6 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cn.zhaol.demo.androidtest">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!--<uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" /> 只有系统应用可以使用 -->
+   <!-- Android6.0 蓝牙扫描才需要 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--
+         <uses-feature android:name="android.hardware.bluetooth_le"
+        android:required="true"/> Android 5.0之前
+    -->
+    <uses-feature
+        android:name="android.bluetooth.le"
+        android:required="true" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +33,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".BLEActivity" />
+        <activity android:name=".ClassicBlueActivity" />
+
+        <service android:name=".ble.BluetoothLeService" />
+        <service android:name=".ble.classic.BluetoothClassicService" />
+
+        <activity android:name=".swipe.mydemo.Hua1Activity" />
+        <activity
+            android:name=".swipe.mydemo.SecondActivity"
+            android:theme="@style/MyTheme" />
+        <activity
+            android:name=".swipe.mydemo.Second2Activity"
+            android:theme="@style/MyTheme" />
+        <activity
+            android:name=".swipe.mydemo.DemoActivity"
+            android:theme="@style/demoTheme" />
+        <activity android:name=".OkHttpActivity" />
+        <activity android:name=".vlayout.MainVlayoutActivity" />
+        <activity android:name=".vlayout.OnePlusNLayoutActivity" />
+        <activity android:name=".vlayout.RootActivity" />
+        <activity android:name=".vlayout.TestActivity" />
+        <activity android:name=".vlayout.VLayoutActivity" />
+        <activity android:name=".vlayout.DebugActivity" />
+        <activity android:name=".vlayout.mydemo.MydemoVlayoutActivity" />
+        <activity android:name=".vlayout.mydemo.MydemoV2Activity" />
+        <activity android:name=".bottomview.Main2Activity" />
+        <activity android:name=".bottomview.CommonTabActivity" />
+        <activity android:name=".bottomview.SegmentTabActivity" />
+        <activity android:name=".bottomview.SlidingTabActivity" />
 
 
 
