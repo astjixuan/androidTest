@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="137dp"
+        android:text="\n蓝牙测试程序\n" />
+
+    <Button
+        android:id="@+id/startClientBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="60dp"
+        android:text="打开客户端" />
+
+    <Button
+        android:id="@+id/base_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:text="蓝牙基本方法的使用" />
+
+    <Button
+        android:id="@+id/startServerBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/startClientBtn"
+        android:layout_marginTop="10dp"
+        android:text="打开服务器" />
+
+    <TextView
+        android:id="@+id/show_clientVal"
+        android:text="客户端发来的信息:"
+        android:layout_below="@id/startServerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+
+</RelativeLayout>
