@@ -23,6 +23,7 @@ import com.cn.zhaol.demo.androidtest.ble.otherdemo.utils.ConnectBluetoothThread;
 import com.cn.zhaol.demo.androidtest.ble.tools.MyConstant;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -49,12 +50,17 @@ public class ClassicBlueToothClientService extends Service {
                 Log.i("receiver ******", "onReceive:  扫描开始");
             } else if(action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
                 Log.i("receiver ******", "onReceive:  扫描完成");
+                //TODO 通知页面
+                Intent in = new Intent("change_my_btn");
+                sendBroadcast(in);
+
             } else if(action.equals(BluetoothDevice.ACTION_FOUND)) {
                 //扫描的结果
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.e("addrs",bluetoothDevice.getAddress()+";"+bluetoothDevice.getName());
                 //去页面更新设备列表
                 Intent intent1 = new Intent(MainActivity.add_devices);
-                intent1.putExtra("addrs",bluetoothDevice.getAddress()+":"+bluetoothDevice.getName());
+                intent1.putExtra("addrs",bluetoothDevice.getAddress()+";"+bluetoothDevice.getName());
                 sendBroadcast(intent1);
 
             } else if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
@@ -66,13 +72,31 @@ public class ClassicBlueToothClientService extends Service {
                 String name = device.getName();
                 Log.w("receiver *****","设备状态改变！connectState = " + connectState);
                 Log.w("receiver *****","设备状态改变！name = " + name + ",address = " + address);
-                if(BluetoothDevice.BOND_BONDED == connectState) {
-                    //已经配对成功
-                    Toast.makeText(getApplicationContext(),"设备："+name+"已经配对成功！",Toast.LENGTH_SHORT).show();
-                    //尝试连接蓝牙
-                    Log.w("BluetoothClassicService","尝试连接蓝牙~");
-                    connectBlueService(device);
+                switch (connectState)
+                {
+                    case BluetoothDevice.BOND_BONDED:
+                        //已经配对成功
+                        Toast.makeText(getApplicationContext(),"设备："+name+"已经配对成功！",Toast.LENGTH_SHORT).show();
+                        //尝试连接蓝牙
+                        Log.w("BluetoothClassicService","尝试连接蓝牙~");
+                        connectBlueService(device);
+
+                        break;
+
+                    case BluetoothDevice.BOND_NONE:
+                        //没有绑定
+                        Toast.makeText(getApplicationContext(),"设备："+name+"没有配对！",Toast.LENGTH_SHORT).show();
+
+                        break;
+
+                    case BluetoothDevice.BOND_BONDING:
+                        //正在配对
+                        Toast.makeText(getApplicationContext(),"设备："+name+"配对ing！",Toast.LENGTH_SHORT).show();
+
+                        break;
+
                 }
+
             }
         }
     };
@@ -81,7 +105,7 @@ public class ClassicBlueToothClientService extends Service {
     public void onCreate() {
         super.onCreate();
         //第一次创建
-        Log.w("Service *****","onCreate() ***");
+        Log.w("ClientService *****","onCreate() ***");
         initBlueService();
 
         IntentFilter filter = new IntentFilter();
@@ -96,14 +120,14 @@ public class ClassicBlueToothClientService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //服务执行的操作
         //每次启动服务器都触发
-        Log.w("Service *****","onStartCommand() ***");
+        Log.w("ClientService *****","onStartCommand() ***");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         //销毁
-        Log.w("Service *****","onDestroy() ***");
+        Log.w("ClientService *****","onDestroy() ***");
         unregisterReceiver(receiver);
         closeClientService();
         serviceHandler.removeCallbacksAndMessages(null);
@@ -165,7 +189,7 @@ public class ClassicBlueToothClientService extends Service {
         //已经配对的设备
         public List<BluetoothDevice> getPairedDevices()
         {
-           return blueToothHelp.getPairedDevices();
+            return blueToothHelp.getPairedDevices();
         }
 
         //客户端连接服务器
@@ -178,13 +202,28 @@ public class ClassicBlueToothClientService extends Service {
             return blueToothHelp.getRemoteDeviceByStrAddress(address);
         }
 
-        public boolean createBond(Class btClass, BluetoothDevice device) throws Exception {
-            return blueToothHelp.createBond(btClass,device);
+//        public boolean createBond(Class btClass, BluetoothDevice device) throws Exception {
+//            //老版本方法
+//            return blueToothHelp.createBond(btClass,device);
+//        }
+
+        public boolean createBond(BluetoothDevice device) {
+            return blueToothHelp.createBond(device);
+        }
+
+        public boolean setPin(BluetoothDevice device,String pin) throws UnsupportedEncodingException {
+            return blueToothHelp.setPin(device,pin);
         }
 
         public void sendMsg(int i) {
             if(null != runThread) {
                 runThread.sendInt(i);
+            }
+        }
+
+        public void sendMsg(byte[] arr) {
+            if(null != runThread) {
+                runThread.sendMessageToPower(arr);
             }
         }
     }
@@ -255,7 +294,7 @@ public class ClassicBlueToothClientService extends Service {
 //        }
         //启动线程，连接服务器
         new ConnectBluetoothThread(serviceHandler,mDevice).start();
-        Log.w("Service *****","connectBlueService 尝试连接蓝牙 ***");
+        Log.w("ClientService *****","connectBlueService 尝试连接蓝牙 ***");
     }
 
 }

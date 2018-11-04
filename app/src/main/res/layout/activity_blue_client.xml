@@ -14,6 +14,12 @@
         android:layout_height="wrap_content"
         android:text="开始搜索蓝牙" />
 
+    <Button
+        android:id="@+id/client_savedAddrBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="检索已配对的设备" />
+
     <ListView
         android:id="@+id/client_listview"
         android:layout_marginTop="5dip"
@@ -26,9 +32,10 @@
         android:layout_height="100dip"
         android:background="#aaa"
         android:layout_marginTop="10dip"
-        android:text="显示接受消息:" />
+        android:text="显示接受消息" />
 
     <EditText
+        android:inputType="number"
         android:layout_marginTop="5dip"
         android:id="@+id/client_editVal"
         android:layout_width="fill_parent"

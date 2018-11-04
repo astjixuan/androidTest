@@ -32,6 +32,7 @@ public class ClassicBlueToothServerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i("ServerService *****","onCreate() ***");
         blueToothHelp = ClassicBlueToothHelp.getInstance();
         //打开蓝牙
         blueToothHelp.openBlueTooth();
@@ -41,12 +42,13 @@ public class ClassicBlueToothServerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //每次启动服务器都触发
-        Log.w("Service *****","onStartCommand() ***");
+        Log.i("Service *****","onStartCommand() ***");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
+        Log.i("*** ServerService ***","服务停止！");
         closeServer();
         serverHandler.removeCallbacksAndMessages(null);
         serverHandler = null;
@@ -82,6 +84,18 @@ public class ClassicBlueToothServerService extends Service {
         //关闭服务器
         public void shutdownServer() {
             closeServer();
+        }
+
+        public void sendMsg(int i) {
+            if(null != runThread) {
+                runThread.sendInt(i);
+            }
+        }
+
+        public void sendMsg(byte[] arr) {
+            if(null != runThread) {
+                runThread.sendMessageToPower(arr);
+            }
         }
     }
 

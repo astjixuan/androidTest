@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.cn.zhaol.demo.androidtest.ble.otherdemo.ClassicBlueMainActivity;
 import com.cn.zhaol.demo.androidtest.bottomview.Main2Activity;
 import com.cn.zhaol.demo.androidtest.swipe.mydemo.DemoActivity;
 import com.cn.zhaol.demo.androidtest.swipe.mydemo.Hua1Activity;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.ble_btn).setOnClickListener(this);
         findViewById(R.id.classic_btn).setOnClickListener(this);
+        findViewById(R.id.blue_demo_btn).setOnClickListener(this);
         findViewById(R.id.huaDong_btn1).setOnClickListener(this);
         findViewById(R.id.huaDong_btn2).setOnClickListener(this);
         findViewById(R.id.huaDong_btn3).setOnClickListener(this);
@@ -56,11 +58,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent();
         switch (v.getId()) {
             case R.id.ble_btn:
+                //低功耗蓝牙
                 if(hasBLE) {
                     BlueDevices.clear();
                     intent.setClass(MainActivity.this,BLEActivity.class);
                     startActivity(intent);
                 }
+                break;
+
+            case R.id.blue_demo_btn:
+                //自己写的经典蓝牙第二版（即可以当客户端也可以当服务器）
+                intent.setClass(MainActivity.this, ClassicBlueMainActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.huaDong_btn1:
@@ -108,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             default:
+                //经典蓝牙
                 BlueDevices.clear();
                 intent.setClass(MainActivity.this,ClassicBlueActivity.class);
                 startActivity(intent);

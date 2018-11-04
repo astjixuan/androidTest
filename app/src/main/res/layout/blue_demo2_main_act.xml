@@ -33,16 +33,24 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/startClientBtn"
+        android:layout_below="@id/startClientBtn"
         android:layout_marginTop="10dp"
         android:text="打开服务器" />
 
-    <TextView
-        android:id="@+id/show_clientVal"
-        android:text="客户端发来的信息:"
+    <Button
+        android:id="@+id/closeServerBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/startServerBtn"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_marginTop="10dp"
+        android:text="关闭服务器" />
 
+    <TextView
+        android:id="@+id/show_clientval"
+        android:text="服务器收到数据："
+        android:layout_below="@id/closeServerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="120dp" />
 
 </RelativeLayout>

@@ -8,7 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    >
 
     <ScrollView
         android:layout_width="match_parent"
@@ -35,6 +36,12 @@
                 android:id="@+id/classic_btn"
                 android:text="经典蓝牙"
                 android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/blue_demo_btn"
+                android:text="蓝牙的网上例子集合"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView

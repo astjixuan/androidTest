@@ -4,9 +4,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,9 @@ public class ClassicBlueToothHelp {
     private final static String TAG = "ClassicBlueToothHelp";
     private BluetoothAdapter mBluetoothAdapter;
     //private volatile boolean isRun = true;    //运行标志位
-
-    private final UUID MY_UUID = UUID.fromString("abcd1234-ab12-ab12-ab12-abcdef123456");//和客户端相同的UUID(随便取)
-    private final String NAME = "Bluetooth_Socket";
+    private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");//移动电源固定uuid
+    //private final UUID MY_UUID = UUID.fromString("abcd1234-ab12-ab12-ab12-abcdef123456");//和客户端相同的UUID(随便取)
+    private final String NAME = "PT_BLUETOOTHSERVER";
 
     private BluetoothSocket clientSocket = null;//客户端
     private BluetoothServerSocket serverSocket = null;//项目需要，服务器只连接一个客户端
@@ -52,7 +54,7 @@ public class ClassicBlueToothHelp {
     }
 
     /**
-     * 创建服务器
+     * 创建服务器,监听到一个客户端
      * @return
      */
     public boolean createBlueServer() {
@@ -84,7 +86,13 @@ public class ClassicBlueToothHelp {
     public boolean connectService(BluetoothDevice device) {
         //创建客户端蓝牙Socket
         try {
-            clientSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+            int sdk = Build.VERSION.SDK_INT;
+            Log.w("connectService","my sdk = " + sdk);
+            if (sdk >= 10) {
+                clientSocket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+            } else {
+                clientSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+            }
             if(!clientSocket.isConnected()){
                 //没有连接去连接
                 clientSocket.connect();//开始连接蓝牙，如果没有配对则弹出对话框提示我们进行配对
@@ -94,7 +102,7 @@ public class ClassicBlueToothHelp {
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "create() failed", e);
             try {
                 //关闭
                 closeClient();
@@ -105,9 +113,9 @@ public class ClassicBlueToothHelp {
         }
     }
 
-        /**
-         * 打开蓝牙
-         */
+    /**
+     * 打开蓝牙
+     */
     public void openBlueTooth() {
         // 打开蓝牙
         if (!mBluetoothAdapter.isEnabled())
@@ -175,6 +183,7 @@ public class ClassicBlueToothHelp {
 
     /**
      * 开始配对(可能弹出提示框，用户输入密码)
+     * 这个方法是在API版本为19以前（Android 4.4）才使用（老方法）
      * @param btClass
      * @param device
      * @return
@@ -184,6 +193,27 @@ public class ClassicBlueToothHelp {
         Method createBondMethod = btClass.getMethod("createBond");
         Boolean returnValue = (Boolean) createBondMethod.invoke(device);
         return returnValue.booleanValue();
+    }
+
+    /**
+     * 开始配对(新方法，19以后使用)
+     * 这是异步调用，它会立即返回。
+     * Register ACTION_BOND_STATE_CHANGED 中得到结果
+     * @param device
+     * @return true 配对开始，false 出现错误
+     */
+    public boolean createBond(BluetoothDevice device) {
+        return device.createBond();
+    }
+
+    /**
+     * 设置pin码(新方法，19以后使用)(还是测试失败。。。)
+     * @param device
+     * @param strPin
+     * @return true 设置成功，false 失败
+     */
+    public boolean setPin(BluetoothDevice device, String strPin) throws UnsupportedEncodingException {
+        return device.setPin(strPin.getBytes("UTF-8"));
     }
 
     /**
@@ -204,7 +234,7 @@ public class ClassicBlueToothHelp {
     }
 
     /**
-     * 与设备解除配对
+     * 与设备解除配对(现在版本隐藏的)
      * 参考源码：platform/packages/apps/Settings.git
      * /Settings/src/com/android/settings/bluetooth/CachedBluetoothDevice.java
      * @param btClass
